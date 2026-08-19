@@ -1,4 +1,4 @@
-import 'package:flutter/material';
+import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class ReportsScreen extends StatefulWidget {

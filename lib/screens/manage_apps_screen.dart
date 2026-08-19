@@ -1,4 +1,4 @@
-import 'package:flutter/material';
+import 'package:flutter/material.dart';
 
 class ManageAppsScreen extends StatefulWidget {
   const ManageAppsScreen({Key? key}) : super(key: key);

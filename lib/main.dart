@@ -1,4 +1,4 @@
-import 'package:flutter/material';
+import 'package:flutter/material.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/reports_screen.dart';
 import 'screens/manage_apps_screen.dart';

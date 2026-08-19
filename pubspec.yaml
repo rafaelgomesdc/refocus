@@ -1,0 +1,35 @@
+name: refocus
+description: "Sistema de Gamificação e Monitoramento do Uso de Redes Sociais com Técnicas de Aprendizado de Máquina - ReFocus"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Ícones padrão do iOS
+  cupertino_icons: ^1.0.6
+
+  # Banco de dados local SQLite
+  sqflite: ^2.3.0
+  path: ^1.8.3
+
+  # Gerenciador de estado para a aplicação
+  provider: ^6.0.5
+
+  # Biblioteca para renderização dos relatórios gráficos (diário/semanal/mensal)
+  fl_chart: ^0.66.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Linters padrão recomendados para boas práticas
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

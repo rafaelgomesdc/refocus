@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">Serviço usado pelo ReFocus para monitorar e limitar o tempo de uso de redes sociais em tempo real.</string>
+</resources>

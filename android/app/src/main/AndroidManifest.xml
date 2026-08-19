@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.refocus.app">
+    package="com.refocus.refocus">
     
     <!-- Permissão para coletar dados de uso de outros aplicativos (Android Usage Stats API) -->
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />

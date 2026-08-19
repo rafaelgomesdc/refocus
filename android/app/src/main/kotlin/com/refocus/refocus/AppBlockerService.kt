@@ -1,4 +1,4 @@
-package com.refocus.app
+package com.refocus.refocus
 
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent

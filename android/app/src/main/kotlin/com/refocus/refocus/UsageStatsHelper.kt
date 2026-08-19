@@ -1,4 +1,4 @@
-package com.refocus.app
+package com.refocus.refocus
 
 import android.app.AppOpsManager
 import android.app.usage.UsageStatsManager

@@ -7,6 +7,9 @@
     <!-- Permissão para desenhar janelas de alerta sobre outros aplicativos (Para telas de bloqueio) -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
+    <!--PERMISSAO PARA 'VER' OS APPS INSTALADOS, VIA PACKAGE-->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+    
     <application
         android:label="ReFocus"
         android:name="${applicationName}"

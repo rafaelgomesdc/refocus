@@ -3,7 +3,25 @@ import 'screens/dashboard_screen.dart';
 import 'screens/reports_screen.dart';
 import 'screens/manage_apps_screen.dart';
 
-void main() {
+import 'package:refocus/controllers/apps_controller.dart';
+
+Future<void> listarApps(AppsController appsController) async {
+  final apps = await appsController.getInstalledApps();
+
+  for (final app in apps) {
+    print("==========APPS==========");
+    print(app);
+    print("========================");
+  }
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); //Inicializa o flutter para depois chamar MethodChannel
+
+  final appsController = AppsController();
+
+  await listarApps(appsController);
+
   runApp(const ReFocusApp());
 }
 

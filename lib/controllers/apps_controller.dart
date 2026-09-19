@@ -4,8 +4,8 @@ class AppsController {
 
   AppsModel? appsModel;
 
-  AppsController() {
-    appsModel = AppsModel();
+  AppsController(db) {
+    appsModel = AppsModel(db);
   }
 
   Future<List<dynamic>> getInstalledApps() async {

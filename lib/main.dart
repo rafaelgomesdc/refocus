@@ -4,6 +4,7 @@ import 'screens/reports_screen.dart';
 import 'screens/manage_apps_screen.dart';
 
 import 'package:refocus/controllers/apps_controller.dart';
+import 'package:refocus/config/database.dart';
 
 Future<void> listarApps(AppsController appsController) async {
   final apps = await appsController.getInstalledApps();
@@ -18,7 +19,7 @@ Future<void> listarApps(AppsController appsController) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Inicializa o flutter para depois chamar MethodChannel
 
-  final appsController = AppsController();
+  final appsController = AppsController(await accessDatabase());
 
   await listarApps(appsController);
 

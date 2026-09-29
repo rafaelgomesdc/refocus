@@ -113,8 +113,8 @@ class DatabaseHelper {
     return await db.insert('apps_monitorados', row);
   }
 
-  Future<List<Map<String, dynamic>>> queryAppsMonitorados() async {
-    final db = await instance.database;
+  Future<List<Map<String, dynamic>>> queryAppsMonitorados(db) async {
+    //final db = await instance.database;
     return await db.rawQuery('''
       SELECT am.id, am.tempo_limite, am.apps_id, a.nome, a.categoria 
       FROM apps_monitorados am

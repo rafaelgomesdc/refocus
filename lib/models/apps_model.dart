@@ -10,4 +10,12 @@ class AppsModel {
 
     return apps;
   }
+
+  Future<List<Map<String, dynamic>>> queryAppsMonitorados() async {
+    return await db.rawQuery('''
+      SELECT am.id, am.tempo_limite, am.apps_id, a.nome, a.categoria 
+      FROM apps_monitorados am
+      INNER JOIN apps a ON am.apps_id = a.id
+    ''');
+  }
 }

@@ -14,6 +14,15 @@ Future<void> listarApps(AppsController appsController) async {
     print(app);
     print("========================");
   }
+  final monitoredApps = await appsController.getMonitoredApps();
+
+  print("CARREGAR APPS MONITORADOS");
+  for (final app in monitoredApps) {
+    print("=====APPS MONITORADOS=====");
+    print(app);
+    print("==========================");
+  }
+  print("FIM - CARREGAR APPS MONITORADOS");
 }
 
 void main() async {

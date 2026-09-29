@@ -13,4 +13,10 @@ class AppsController {
 
       return apps;
   }
+
+  Future<List<dynamic>> getMonitoredApps() async {
+    final monitoredApps = await appsModel!.queryAppsMonitorados();
+
+    return monitoredApps;
+  }
 }

@@ -9,6 +9,10 @@ class ManageAppsScreen extends StatefulWidget {
 
 class _ManageAppsScreenState extends State<ManageAppsScreen> {
   // Lista de simulação de apps monitorados
+
+  List<Map<String, dynamic>> _appsInstalados = [];
+  Set<String> _appsSelecionados = {};
+
   final List<Map<String, dynamic>> _apps = [
     {
       'name': 'Instagram',
@@ -35,6 +39,75 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
       'isExpanded': false,
     },
   ];
+
+  void _showAppSelection() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return StatefulBuilder(
+            builder: (context, setModalState) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.8,
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        'Selecionar Apps',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _appsInstalados.length,
+                        itemBuilder: (context, index) {
+                          final app = _appsInstalados[index];
+
+                          final String appName = app['label'];
+                          final String packageName = app['packageName'];
+
+                          final bool selected = _appsSelecionados.contains(packageName);
+
+                          return CheckboxListTile(
+                            title: Text(appName),
+                            subtitle: Text(packageName),
+                            value: selected,
+                            onChanged: (value) {
+                              setModalState(() {
+                                if (value == true) {
+                                  _appsSelecionados.add(packageName);
+                                } else {
+                                  _appsSelecionados.remove(packageName);
+                                }
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Confirmar'),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +207,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
             ElevatedButton(
               onPressed: () {
                 // Abre o fluxo para adicionar novos apps da lista do sistema
+                _showAppSelection();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,

@@ -7,10 +7,7 @@
     <list default="true" id="ea19f811-81b8-4d45-af42-12962576a4d7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/controllers/apps_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/controllers/apps_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/database/database_helper.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/database/database_helper.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/models/apps_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/apps_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/manage_apps_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/manage_apps_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

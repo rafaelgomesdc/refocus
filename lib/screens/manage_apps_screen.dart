@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:refocus/controllers/apps_controller.dart';
 
 class ManageAppsScreen extends StatefulWidget {
-  const ManageAppsScreen({Key? key}) : super(key: key);
+  final AppsController? appsController;
+
+  ManageAppsScreen(this.appsController, {Key? key}) : super(key: key);
 
   @override
   State<ManageAppsScreen> createState() => _ManageAppsScreenState();
 }
 
 class _ManageAppsScreenState extends State<ManageAppsScreen> {
-  // Lista de simulação de apps monitorados
-
-  List<Map<String, dynamic>> _appsInstalados = [];
+  List<dynamic> _appsInstalados = [];
   Set<String> _appsSelecionados = {};
 
+  // Lista de simulação de apps monitorados
   final List<Map<String, dynamic>> _apps = [
     {
       'name': 'Instagram',
@@ -40,7 +42,15 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
     },
   ];
 
+  Future<void> getInstalledApps() async {
+    this._appsInstalados = await widget.appsController!.getInstalledApps();
+  }
+
+
   void _showAppSelection() {
+    getInstalledApps();
+
+    //Tela selecao de aplicativos
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -68,8 +78,8 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
                         itemBuilder: (context, index) {
                           final app = _appsInstalados[index];
 
-                          final String appName = app['label'];
-                          final String packageName = app['packageName'];
+                          final String appName = app['name']!;
+                          final String packageName = app['packageName']!;
 
                           final bool selected = _appsSelecionados.contains(packageName);
 

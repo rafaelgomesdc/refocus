@@ -27,16 +27,17 @@ Future<void> listarApps(AppsController appsController) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Inicializa o flutter para depois chamar MethodChannel
-
   final appsController = AppsController(await accessDatabase());
 
   await listarApps(appsController);
 
-  runApp(const ReFocusApp());
+  runApp(ReFocusApp(appsController));
 }
 
 class ReFocusApp extends StatelessWidget {
-  const ReFocusApp({Key? key}) : super(key: key);
+  final AppsController appsController;
+
+  ReFocusApp(AppsController this.appsController, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +48,15 @@ class ReFocusApp extends StatelessWidget {
         primarySwatch: Colors.blueGrey,
         scaffoldBackgroundColor: Colors.grey[100],
       ),
-      home: const MainNavigationShell(),
+      home: MainNavigationShell(appsController),
     );
   }
 }
 
 class MainNavigationShell extends StatefulWidget {
-  const MainNavigationShell({Key? key}) : super(key: key);
+  final AppsController? appsController;
+
+  MainNavigationShell(AppsController this.appsController, {Key? key}) : super(key: key);
 
   @override
   State<MainNavigationShell> createState() => _MainNavigationShellState();
@@ -62,14 +65,14 @@ class MainNavigationShell extends StatefulWidget {
 class _MainNavigationShellState extends State<MainNavigationShell> {
   int _currentIndex = 1; // Inicia na aba Home (Dashboard)
 
-  final List<Widget> _screens = const [
-    ReportsScreen(),
-    DashboardScreen(),
-    ManageAppsScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _screens = [
+      const ReportsScreen(),
+      const DashboardScreen(),
+      ManageAppsScreen(widget.appsController),
+    ];
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,

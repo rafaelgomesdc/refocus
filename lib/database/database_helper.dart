@@ -36,18 +36,21 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE apps (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL,
-        categoria TEXT NOT NULL,
-        tempo_de_uso TEXT NOT NULL
+        package VARCHAR(45) NOT NULL,
+        nome VARCHAR(45) NOT NULL,
+        categoria VARCHAR(45),
+        tempo_de_uso VARCHAR(45)
       )
     ''');
 
     // 2. Tabela apps_monitorados
     await db.execute('''
       CREATE TABLE apps_monitorados (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
         tempo_limite INTEGER NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        bloqueado TINYINT NOT NULL,
         apps_id INTEGER NOT NULL,
+        apps_package VARCHAR(45) NOT NULL,
         FOREIGN KEY (apps_id) REFERENCES apps (id) ON DELETE CASCADE
       )
     ''');
@@ -56,10 +59,11 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE sessao_uso (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        data_inicio TEXT NOT NULL,
-        data_fim TEXT NOT NULL,
+        data_inicio DATETIME NOT NULL,
+        data_fim DATETIME NOT NULL,
         duracao INTEGER NOT NULL,
         apps_id INTEGER NOT NULL,
+        apps_package VARCHAR(45) NOT NULL,
         FOREIGN KEY (apps_id) REFERENCES apps (id) ON DELETE CASCADE
       )
     ''');
@@ -67,11 +71,9 @@ class DatabaseHelper {
     // 4. Tabela relatorio_diario
     await db.execute('''
       CREATE TABLE relatorio_diario (
-        date TEXT PRIMARY KEY,
-        tempo_total_tela INTEGER NOT NULL,
-        apps_id INTEGER NOT NULL,
+        date DATE PRIMARY KEY,
+        tempo_total INTEGER NOT NULL,
         sessao_uso_id INTEGER NOT NULL,
-        FOREIGN KEY (apps_id) REFERENCES apps (id) ON DELETE CASCADE,
         FOREIGN KEY (sessao_uso_id) REFERENCES sessao_uso (id) ON DELETE CASCADE
       )
     ''');
@@ -79,9 +81,9 @@ class DatabaseHelper {
     // 5. Tabela relatorio_semanal
     await db.execute('''
       CREATE TABLE relatorio_semanal (
-        date TEXT PRIMARY KEY,
-        tempo_total_tela INTEGER NOT NULL,
-        relatorio_diario_date TEXT NOT NULL,
+        date DATE PRIMARY KEY,
+        tempo_total INTEGER NOT NULL,
+        relatorio_diario_date DATE NOT NULL,
         FOREIGN KEY (relatorio_diario_date) REFERENCES relatorio_diario (date) ON DELETE CASCADE
       )
     ''');
@@ -89,15 +91,16 @@ class DatabaseHelper {
     // 6. Tabela relatorio_mensal
     await db.execute('''
       CREATE TABLE relatorio_mensal (
-        date TEXT PRIMARY KEY,
-        tempo_total_tela INTEGER NOT NULL,
-        relatorio_diario_date TEXT NOT NULL,
+        date DATE PRIMARY KEY,
+        tempo_total INTEGER NOT NULL,
+        relatorio_diario_date DATE NOT NULL,
         FOREIGN KEY (relatorio_diario_date) REFERENCES relatorio_diario (date) ON DELETE CASCADE
       )
     ''');
   }
 
   // Exemplo de métodos auxiliares de CRUD podem ser adicionados aqui conforme o desenvolvimento avança
+  /*
   Future<int> insertApp(Map<String, dynamic> row) async {
     final db = await instance.database;
     return await db.insert('apps', row);
@@ -113,14 +116,23 @@ class DatabaseHelper {
     return await db.insert('apps_monitorados', row);
   }
 
-  Future<List<Map<String, dynamic>>> queryAppsMonitorados(db) async {
-    //final db = await instance.database;
+  Future<List<Map<String, dynamic>>> queryAppsMonitorados() async {
+    final db = await instance.database;
+
     return await db.rawQuery('''
-      SELECT am.id, am.tempo_limite, am.apps_id, a.nome, a.categoria 
+      SELECT
+        am.tempo_limite,
+        am.status,
+        am.bloqueado,
+        am.apps_id,
+        am.apps_package,
+        a.nome,
+        a.categoria
       FROM apps_monitorados am
       INNER JOIN apps a ON am.apps_id = a.id
     ''');
   }
+  */
 
   Future close() async {
     final db = await instance.database;

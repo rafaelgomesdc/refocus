@@ -11,7 +11,7 @@ class ManageAppsScreen extends StatefulWidget {
 }
 
 class _ManageAppsScreenState extends State<ManageAppsScreen> {
-  List<dynamic> _appsInstalados = [];
+  List? _appsInstalados = [];
   Set<String> _appsSelecionados = {};
 
   // Lista de simulação de apps monitorados
@@ -43,12 +43,12 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
   ];
 
   Future<void> getInstalledApps() async {
-    this._appsInstalados = await widget.appsController!.getInstalledApps();
+    this._appsInstalados = await widget.appsController!.consultInstalledApps();
   }
 
 
-  void _showAppSelection() {
-    getInstalledApps();
+  Future<void> _showAppSelection() async {
+    await getInstalledApps();
 
     //Tela selecao de aplicativos
     showModalBottomSheet(
@@ -74,12 +74,12 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
 
                     Expanded(
                       child: ListView.builder(
-                        itemCount: _appsInstalados.length,
+                        itemCount: _appsInstalados!.length,
                         itemBuilder: (context, index) {
-                          final app = _appsInstalados[index];
+                          final app = _appsInstalados![index];
 
-                          final String appName = app['name']!;
-                          final String packageName = app['packageName']!;
+                          final String appName = app.name!;
+                          final String packageName = app.packageName!;
 
                           final bool selected = _appsSelecionados.contains(packageName);
 

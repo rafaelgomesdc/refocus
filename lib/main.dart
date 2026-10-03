@@ -11,7 +11,8 @@ Future<void> listarApps(AppsController appsController) async {
 
   for (final app in apps) {
     print("==========APPS==========");
-    print(app);
+    print("App name: " + app.name!);
+    print("Package name: " + app.packageName!);
     print("========================");
   }
   final monitoredApps = await appsController.getMonitoredApps();

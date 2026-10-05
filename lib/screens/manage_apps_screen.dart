@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refocus/controllers/apps_controller.dart';
+import 'package:refocus/objs/app_monitorado.dart';
 
 class ManageAppsScreen extends StatefulWidget {
   final AppsController? appsController;
@@ -12,10 +13,19 @@ class ManageAppsScreen extends StatefulWidget {
 
 class _ManageAppsScreenState extends State<ManageAppsScreen> {
   List? _appsInstalados = [];
-  Set<String> _appsSelecionados = {};
+  List<AppMonitorado> _appsMonitorados = []; //widget.appsController!.getMonitoredApps();
 
   // Lista de simulação de apps monitorados
-  final List<Map<String, dynamic>> _apps = [
+  List<Map<String, dynamic>> _apps = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getMonitoredApps();
+  }
+
+
+  /*final List<Map<String, dynamic>> _apps = [
     {
       'name': 'Instagram',
       'used': '1h30',
@@ -40,12 +50,117 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
       'isBlocked': false,
       'isExpanded': false,
     },
-  ];
+  ];*/
 
   Future<void> getInstalledApps() async {
     this._appsInstalados = await widget.appsController!.consultInstalledApps();
   }
 
+  Future<void> getMonitoredApps() async {
+    final appsMonitorados = await widget.appsController!.getMonitoredApps();
+
+    setState(() {
+      _appsMonitorados = appsMonitorados;
+
+      _apps.clear();
+
+      for (var app in _appsMonitorados) {
+        _apps.add({
+          'name': app.name,
+          'package': app.packageName,
+          'used': '0h00',
+          'limit': app.tempoLimite,
+          'status': 'Ativo',
+          'isBlocked': false,
+          'isExpanded': false,
+        });
+      }
+    });
+  }
+
+  void _showTimeLimitDialog(
+      String appName,
+      String packageName,
+      ) {
+    final TextEditingController timeController =
+    TextEditingController();
+
+    //Tela de configuração de app monitorado
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            'Configurar aplicativo',
+          ),
+
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                appName,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                packageName,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              TextField(
+                controller: timeController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Tempo limite',
+                  hintText: 'Ex: 60',
+                  suffixText: 'minutos',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancelar'),
+            ),
+
+            ElevatedButton(
+              onPressed: () async {
+                //Lógica para registrar no banco de dados
+                if (timeController.text.isEmpty) {
+                  return;
+                }
+
+                await widget.appsController!.storeMonitoredApp(packageName, int.parse(timeController.text));
+
+                await getMonitoredApps();
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _showAppSelection() async {
     await getInstalledApps();
@@ -55,65 +170,50 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
       context: context,
       isScrollControlled: true,
       builder: (context) {
-        return StatefulBuilder(
-            builder: (context, setModalState) {
-              return SizedBox(
-                height: MediaQuery.of(context).size.height * 0.8,
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        'Selecionar Apps',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _appsInstalados!.length,
-                        itemBuilder: (context, index) {
-                          final app = _appsInstalados![index];
-
-                          final String appName = app.name!;
-                          final String packageName = app.packageName!;
-
-                          final bool selected = _appsSelecionados.contains(packageName);
-
-                          return CheckboxListTile(
-                            title: Text(appName),
-                            subtitle: Text(packageName),
-                            value: selected,
-                            onChanged: (value) {
-                              setModalState(() {
-                                if (value == true) {
-                                  _appsSelecionados.add(packageName);
-                                } else {
-                                  _appsSelecionados.remove(packageName);
-                                }
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Confirmar'),
-                      ),
-                    ),
-                  ],
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  'Selecionar aplicativo',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              );
-            },
+              ),
+
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _appsInstalados!.length,
+                  itemBuilder: (context, index) {
+                    final app = _appsInstalados![index];
+
+                    final String appName = app.name;
+                    final String packageName = app.packageName;
+
+                    return ListTile(
+                      leading: const Icon(Icons.apps),
+                      title: Text(appName),
+                      subtitle: Text(packageName),
+
+                      // Quando clicar no aplicativo
+                      onTap: () {
+                        Navigator.pop(context);
+
+                        _showTimeLimitDialog(
+                          appName,
+                          packageName,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -121,6 +221,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -197,8 +298,10 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
                                     child: const Text('Editar Limite'),
                                   ),
                                   TextButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       // Logica para remover monitoramento
+                                      await widget.appsController!.removeMonitoredApp(app['package']);
+                                      await getMonitoredApps();
                                     },
                                     child: const Text('Remover', style: TextStyle(color: Colors.red)),
                                   ),

@@ -1,5 +1,6 @@
 import 'package:refocus/models/apps_model.dart';
 import 'package:refocus/objs/app.dart';
+import 'package:refocus/objs/app_monitorado.dart';
 //import 'package:refocus/database/temp_database.json';
 class AppsController {
 
@@ -9,11 +10,7 @@ class AppsController {
     appsModel = AppsModel(db);
   }
 
-  Future<void> storeInstalledApps(apps) async {
-    //Lógica para gravar apps instalados no banco de dados
-    appsModel!.storeInstalledApps(apps);
-  }
-
+  /*METODO DE CONSULTA NO DISPOSITIVO*/
   Future<List<App>> getInstalledApps() async {
     //Pega os aplicativos instalados direto do dispositivo
     final apps = await appsModel!.getInstalledApps();
@@ -22,21 +19,32 @@ class AppsController {
     return apps;
   }
 
-  Future<List<dynamic>> getMonitoredApps() async {
-    final monitoredApps = await appsModel!.queryAppsMonitorados();
+  /*METODOS PARA REGISTRAR NO BANCO DE DADOS*/
+  Future<void> storeInstalledApps(apps) async {
+    appsModel!.storeInstalledApps(apps);
+  }
+
+  Future<void> storeMonitoredApp(packageName, tempoLimite) async {
+    //Lógica para gravar app monitorado no banco de dados
+    await appsModel!.storeMonitoredApp(packageName, tempoLimite);
+  }
+
+  /*METODOS PARA CONSULTAS NO BANCO DE DADOS*/
+  Future<List<App>> consultInstalledApps() async {
+    final apps = await appsModel!.queryAppsInstalados();
+
+    return apps;
+  }
+
+  Future<List<AppMonitorado>> getMonitoredApps() async {
+    //final query = await appsModel!.queryAppsMonitorados();
+    final List<AppMonitorado> monitoredApps = await appsModel!.queryAppsMonitorados();
 
     return monitoredApps;
   }
 
-  void storeMonitoredApp(app) {
-    //Lógica para gravar app monitorado no banco de dados
-  }
-
-  Future<List<App>> consultInstalledApps() async {
-    //Consulta os apps instalados no banco de dados
-    final apps = await appsModel!.queryAppsInstalados();
-
-
-    return apps!;
+  /*METODOS PARA REMOVER DO BANCO DE DADOS*/
+  Future<void> removeMonitoredApp(String package) async {
+    appsModel!.dropMonitoredApp(package);
   }
 }

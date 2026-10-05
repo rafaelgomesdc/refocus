@@ -4,5 +4,5 @@ class AppMonitorado extends App {
   int? tempoLimite;
 
   @override
-  AppMonitorado(super.name, super.packageName);
+  AppMonitorado(super.name, super.packageName, this.tempoLimite);
 }

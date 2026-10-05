@@ -1,11 +1,14 @@
 import "package:refocus/services/app_info_service.dart";
 import "package:refocus/objs/app.dart";
+import "package:refocus/objs/app_monitorado.dart";
+import 'package:sqflite/sqflite.dart';
 
 class AppsModel {
   final db;
 
   AppsModel(this.db);
 
+  /*METODO DE CONSULTA NO DISPOSITIVO*/
   Future<List<App>> getInstalledApps() async {
     final queryApps = await AppInfoService.getInstalledAppsFromDevice();
     List<App> appsList = [];
@@ -18,6 +21,7 @@ class AppsModel {
     return appsList;
   }
 
+  /*METODOS PARA REGISTRAR NO BANCO DE DADOS*/
   Future<void> storeInstalledApps(apps) async {
     //Lógica para gravar apps instalados no banco de dados
 
@@ -27,36 +31,56 @@ class AppsModel {
         'nome': app.name,
         'categoria': '',
         'tempo_de_uso': '',
-      });
+      },
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+
     }
   }
 
-  Future<void> storeMonitoredApp(app) async {
+  Future<void> storeMonitoredApp(packageName, tempoLimite) async {
     //Lógica para gravar app monitorado no banco de dados
+    await db.insert('apps_monitorados', {
+      'apps_package': packageName,
+      'tempo_limite': tempoLimite
+    },
+    conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
   }
 
-  Future<List<Map<String, dynamic>>> queryAppsMonitorados() async {
-    return await db.rawQuery('''
+  /*METODOS PARA CONSULTAS NO BANCO DE DADOS*/
+  Future<List<AppMonitorado>> queryAppsMonitorados() async {
+    final queryAppsMonitorados = await db.rawQuery('''
       SELECT
         am.tempo_limite,
-        am.status,
-        am.bloqueado,
-        am.apps_id,
         am.apps_package,
-        a.nome,
-        a.categoria
+        a.nome
       FROM apps_monitorados am
-      INNER JOIN apps a ON am.apps_id = a.id
+      INNER JOIN apps a ON am.apps_package = a.package
+      ORDER BY a.nome
     ''');
+    List<AppMonitorado> appsList = [];
+
+    for (var app in queryAppsMonitorados) {
+      AppMonitorado _app = AppMonitorado(
+        app['nome'] as String,
+        app['apps_package'] as String,
+        app['tempo_limite'],
+      );
+
+      appsList.add(_app);
+    }
+
+    return appsList;
   }
 
   Future<List<App>> queryAppsInstalados() async {
-    //Consulta os apps instalados pelo banco de dados
     final queryApps = await db.rawQuery('''
       SELECT
         a.package,
         a.nome
       FROM apps a
+      ORDER BY a.nome
     ''');
     List<App> appsList = [];
 
@@ -66,5 +90,15 @@ class AppsModel {
     }
 
     return appsList;
+  }
+
+  /*METODOS PARA REMOVER DO BANCO DE DADOS*/
+  Future<void> dropMonitoredApp(String package) async {
+    //Logica para remover app monitorado
+    await db.delete(
+      'apps_monitorados',
+      where: 'apps_package = ?',
+      whereArgs: [package],
+    );
   }
 }

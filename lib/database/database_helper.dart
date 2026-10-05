@@ -36,7 +36,7 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE apps (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        package VARCHAR(45) NOT NULL,
+        package VARCHAR(45) NOT NULL UNIQUE,
         nome VARCHAR(45) NOT NULL,
         categoria VARCHAR(45),
         tempo_de_uso VARCHAR(45)
@@ -47,10 +47,10 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE apps_monitorados (
         tempo_limite INTEGER NOT NULL,
-        status VARCHAR(50) NOT NULL,
-        bloqueado TINYINT NOT NULL,
-        apps_id INTEGER NOT NULL,
-        apps_package VARCHAR(45) NOT NULL,
+        status VARCHAR(50),
+        bloqueado TINYINT,
+        apps_id INTEGER,
+        apps_package VARCHAR(45) NOT NULL UNIQUE,
         FOREIGN KEY (apps_id) REFERENCES apps (id) ON DELETE CASCADE
       )
     ''');

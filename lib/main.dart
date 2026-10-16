@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/reports_screen.dart';
 import 'screens/manage_apps_screen.dart';
@@ -26,11 +27,24 @@ Future<void> listarApps(AppsController appsController) async {
   print("FIM - CARREGAR APPS MONITORADOS");
 }
 
+/*FUNCAO PARA TESTE DE MONITORAMENTO*/
+/*
+Future<void> startMonitoring(usageChannel) async {
+  await usageChannel.invokeMethod('startMonitoring',);
+}
+*/
+/*FIM - FUNCAO TESTE*/
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Inicializa o flutter para depois chamar MethodChannel
   final appsController = AppsController(await accessDatabase());
 
-  await listarApps(appsController);
+  //await listarApps(appsController);
+
+  /*TESTE DE MONITORAMENTO*/
+  //const MethodChannel usageChannel = MethodChannel('com.refocus.app/usage');
+  //await startMonitoring(usageChannel);
+  /*FIM - TESTE*/
 
   runApp(ReFocusApp(appsController));
 }

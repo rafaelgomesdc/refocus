@@ -53,6 +53,8 @@ void main() async {
   print(permissions);
   print("===FIM PERMISSÃO DE DADOS DE USO===");
 
+  await appsController.getInstalledApps();
+
   runApp(ReFocusApp(appsController));
 }
 

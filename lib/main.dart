@@ -7,6 +7,8 @@ import 'screens/manage_apps_screen.dart';
 import 'package:refocus/controllers/apps_controller.dart';
 import 'package:refocus/config/database.dart';
 
+import 'package:refocus/config/permission.dart';
+
 Future<void> listarApps(AppsController appsController) async {
   final apps = await appsController.getInstalledApps();
 
@@ -45,6 +47,11 @@ void main() async {
   //const MethodChannel usageChannel = MethodChannel('com.refocus.app/usage');
   //await startMonitoring(usageChannel);
   /*FIM - TESTE*/
+
+  final permissions = await checkPermissions();
+  print("=====PERMISSÃO DE DADOS DE USO=====");
+  print(permissions);
+  print("===FIM PERMISSÃO DE DADOS DE USO===");
 
   runApp(ReFocusApp(appsController));
 }

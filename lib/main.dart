@@ -9,6 +9,8 @@ import 'package:refocus/config/database.dart';
 
 import 'package:refocus/config/permission.dart';
 
+const MethodChannel usageChannel = MethodChannel('com.refocus.app/usage');
+
 Future<void> listarApps(AppsController appsController) async {
   final apps = await appsController.getInstalledApps();
 
@@ -30,11 +32,9 @@ Future<void> listarApps(AppsController appsController) async {
 }
 
 /*FUNCAO PARA TESTE DE MONITORAMENTO*/
-/*
-Future<void> startMonitoring(usageChannel) async {
+Future<void> startMonitoring() async {
   await usageChannel.invokeMethod('startMonitoring',);
 }
-*/
 /*FIM - FUNCAO TESTE*/
 
 void main() async {
@@ -44,8 +44,7 @@ void main() async {
   //await listarApps(appsController);
 
   /*TESTE DE MONITORAMENTO*/
-  //const MethodChannel usageChannel = MethodChannel('com.refocus.app/usage');
-  //await startMonitoring(usageChannel);
+  await startMonitoring();
   /*FIM - TESTE*/
 
   final permissions = await checkPermissions();

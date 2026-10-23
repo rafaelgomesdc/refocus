@@ -8,8 +8,9 @@ Future<bool> checkPermissions() async {
   if (!usagePermission) {
     _openUsageSettings();
   }
+  else { return true; }
 
-  return true;
+  return false;
 }
 
 Future<bool> _checkUsagePermission() async {

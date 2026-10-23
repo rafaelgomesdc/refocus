@@ -7,6 +7,8 @@ import io.flutter.plugin.common.MethodChannel
 
 import android.content.pm.ApplicationInfo
 
+import android.util.Log
+
 //UsageStats
 import android.content.Intent
 

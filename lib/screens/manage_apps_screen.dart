@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:refocus/controllers/apps_controller.dart';
+import 'package:refocus/controllers/monitoramento_controller.dart';
 import 'package:refocus/objs/app_monitorado.dart';
 
 class ManageAppsScreen extends StatefulWidget {
   final AppsController? appsController;
+  final MonitoramentoController? monitoramentoController;
 
-  ManageAppsScreen(this.appsController, {Key? key}) : super(key: key);
+  ManageAppsScreen(this.appsController, this.monitoramentoController, {Key? key}) : super(key: key);
 
   @override
   State<ManageAppsScreen> createState() => _ManageAppsScreenState();
@@ -14,6 +16,7 @@ class ManageAppsScreen extends StatefulWidget {
 class _ManageAppsScreenState extends State<ManageAppsScreen> {
   List? _appsInstalados = [];
   List<AppMonitorado> _appsMonitorados = []; //widget.appsController!.getMonitoredApps();
+  List _dadosUso = [];
 
   // Lista de simulação de apps monitorados
   List<Map<String, dynamic>> _apps = [];
@@ -58,9 +61,11 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
 
   Future<void> getMonitoredApps() async {
     final appsMonitorados = await widget.appsController!.getMonitoredApps();
+    final dadosUso = await widget.monitoramentoController!.consultarUsoHoje(appsMonitorados);
 
     setState(() {
       _appsMonitorados = appsMonitorados;
+      _dadosUso = dadosUso;
 
       _apps.clear();
 
@@ -68,7 +73,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
         _apps.add({
           'name': app.name,
           'package': app.packageName,
-          'used': '0h00',
+          'used': _dadosUso[_appsMonitorados.indexOf(app)],
           'limit': app.tempoLimite,
           'status': 'Ativo',
           'isBlocked': false,
@@ -212,6 +217,16 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
                   },
                 ),
               ),
+              /*
+              const SizedBox(height: 20),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ElevatedButton(
+                  onPressed: widget.monitoramentoController.consultarUsoHoje(),
+                  child: const Text('Atualizar uso'),
+                ),
+              )*/
             ],
           ),
         );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:refocus/controllers/monitoramento_controller.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/reports_screen.dart';
 import 'screens/manage_apps_screen.dart';
@@ -40,6 +41,7 @@ Future<void> startMonitoring() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Inicializa o flutter para depois chamar MethodChannel
   final appsController = AppsController(await accessDatabase());
+  final monitoramentoController = MonitoramentoController();
 
   //await listarApps(appsController);
 
@@ -54,13 +56,14 @@ void main() async {
 
   await appsController.getInstalledApps();
 
-  runApp(ReFocusApp(appsController));
+  runApp(ReFocusApp(appsController, monitoramentoController));
 }
 
 class ReFocusApp extends StatelessWidget {
   final AppsController appsController;
+  final MonitoramentoController monitoramentoController;
 
-  ReFocusApp(AppsController this.appsController, {Key? key}) : super(key: key);
+  ReFocusApp(AppsController this.appsController, this.monitoramentoController, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -71,15 +74,16 @@ class ReFocusApp extends StatelessWidget {
         primarySwatch: Colors.blueGrey,
         scaffoldBackgroundColor: Colors.grey[100],
       ),
-      home: MainNavigationShell(appsController),
+      home: MainNavigationShell(appsController, monitoramentoController),
     );
   }
 }
 
 class MainNavigationShell extends StatefulWidget {
   final AppsController? appsController;
+  final MonitoramentoController? monitoramentoController;
 
-  MainNavigationShell(AppsController this.appsController, {Key? key}) : super(key: key);
+  MainNavigationShell(AppsController this.appsController, this.monitoramentoController, {Key? key}) : super(key: key);
 
   @override
   State<MainNavigationShell> createState() => _MainNavigationShellState();
@@ -93,7 +97,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     final List<Widget> _screens = [
       const ReportsScreen(),
       const DashboardScreen(),
-      ManageAppsScreen(widget.appsController),
+      ManageAppsScreen(widget.appsController, widget.monitoramentoController),
     ];
 
     return Scaffold(

@@ -59,7 +59,7 @@ object UsageStatsHelper {
             for (usageStat in stats) {
                 val totalTime = usageStat.totalTimeInForeground
                 // Filtra apenas apps com tempo de uso ativo maior que zero
-                if (totalTime > 0) {
+                if (totalTime >= 0) {
                     val item = mapOf(
                         "packageName" to usageStat.packageName,
                         "totalTime" to totalTime // Retorna em milissegundos

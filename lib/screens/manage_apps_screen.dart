@@ -16,7 +16,7 @@ class ManageAppsScreen extends StatefulWidget {
 class _ManageAppsScreenState extends State<ManageAppsScreen> {
   List? _appsInstalados = [];
   List<AppMonitorado> _appsMonitorados = []; //widget.appsController!.getMonitoredApps();
-  List _dadosUso = [];
+  Map<dynamic, dynamic> _dadosUso = {};
 
   // Lista de simulação de apps monitorados
   List<Map<String, dynamic>> _apps = [];
@@ -73,7 +73,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
         _apps.add({
           'name': app.name,
           'package': app.packageName,
-          'used': _dadosUso[_appsMonitorados.indexOf(app)],
+          'used': _dadosUso[app.packageName],
           'limit': app.tempoLimite,
           'status': 'Ativo',
           'isBlocked': false,

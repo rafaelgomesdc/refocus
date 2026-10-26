@@ -16,15 +16,18 @@ class MonitoramentoController {
 
   void RegistrarUso() {}
 
-  Future<List> consultarUsoHoje(List<AppMonitorado> _appsMonitorados) async {
-    const MethodChannel _channel = MethodChannel('com.refocus/usage');
+  Future<Map<dynamic, dynamic>> consultarUsoHoje(List<AppMonitorado> _appsMonitorados) async {
+    const MethodChannel _channel = MethodChannel('com.refocus.app/usage');
     var appsUsageData = await _channel.invokeMethod('getUsageStats');
-    var _appsTimeList = [];
+    Map<dynamic, dynamic> _appsTimeList = {};
 
     for (var app in appsUsageData) {
       for (var appMonitorado in _appsMonitorados)
-        if (app.packageName == appMonitorado.packageName) {
-          _appsTimeList.add(app.totalTime);
+        if (app['packageName'] == appMonitorado.packageName) {
+          /*var appTimeData = {
+            appMonitorado.packageName: app['totalTime'],
+          };*/
+          _appsTimeList[app['packageName']] = app['totalTime'];
         }
     }
 

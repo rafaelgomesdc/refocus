@@ -75,7 +75,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
           'name': app.name,
           'package': app.packageName,
           'used': timeFormat(_dadosUso[app.packageName] ?? 0),
-          'limit': app.tempoLimite,
+          'limit': timeFormat(app.tempoLimite!),
           'status': 'Ativo',
           'isBlocked': false,
           'isExpanded': false,
@@ -152,7 +152,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
                   return;
                 }
 
-                await widget.appsController!.storeMonitoredApp(packageName, int.parse(timeController.text));
+                await widget.appsController!.storeMonitoredApp(packageName, (int.parse(timeController.text) * 60000));
 
                 await getMonitoredApps();
 

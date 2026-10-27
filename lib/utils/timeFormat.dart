@@ -1,5 +1,9 @@
-Map<String, int> convertMili(int tempo) {
-  int conv = (tempo / 60000).toInt(); // Converte em minutos
+Map<String, int> convertMili(int? tempo) {
+  int conv = 0;
+
+  if (tempo != null && tempo > 0) {
+    conv = (tempo / 60000).toInt(); // Converte em minutos
+  }
 
   var time = {
     'h': 0,
@@ -13,8 +17,8 @@ Map<String, int> convertMili(int tempo) {
     time['m'] = conv;
   }
   else if (conv >= 60) {
-    int hora = (conv ~/ 3600000).toInt();
-    int minuto = ((conv % 3600000) / 60000).toInt();
+    int hora = (conv ~/ 60).toInt();
+    int minuto = (conv % 60).toInt();
 
     time['h'] = hora;
     time['m'] = minuto;

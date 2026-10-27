@@ -27,6 +27,9 @@ class MonitoramentoController {
           /*var appTimeData = {
             appMonitorado.packageName: app['totalTime'],
           };*/
+          if (app['totalTime'] == null) {
+            app['totalTime'] = 0;
+          }
           _appsTimeList[app['packageName']] = app['totalTime'];
         }
     }

@@ -74,7 +74,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
         _apps.add({
           'name': app.name,
           'package': app.packageName,
-          'used': timeFormat(_dadosUso[app.packageName]),
+          'used': timeFormat(_dadosUso[app.packageName] ?? 0),
           'limit': app.tempoLimite,
           'status': 'Ativo',
           'isBlocked': false,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:refocus/controllers/apps_controller.dart';
 import 'package:refocus/controllers/monitoramento_controller.dart';
 import 'package:refocus/objs/app_monitorado.dart';
+import 'package:refocus/utils/timeFormat.dart';
 
 class ManageAppsScreen extends StatefulWidget {
   final AppsController? appsController;
@@ -73,7 +74,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
         _apps.add({
           'name': app.name,
           'package': app.packageName,
-          'used': _dadosUso[app.packageName],
+          'used': timeFormat(_dadosUso[app.packageName]),
           'limit': app.tempoLimite,
           'status': 'Ativo',
           'isBlocked': false,

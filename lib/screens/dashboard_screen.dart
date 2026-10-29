@@ -107,10 +107,10 @@ class DashboardScreen extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  /*const SizedBox(height: 16),
                   _buildAppUsageRow('Instagram', '0h33', Icons.camera_alt),
                   _buildAppUsageRow('TikTok', '0h29', Icons.music_note),
-                  _buildAppUsageRow('Whatsapp', '0h24', Icons.chat),
+                  _buildAppUsageRow('Whatsapp', '0h24', Icons.chat),*/
                 ],
               ),
             ),

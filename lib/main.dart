@@ -96,7 +96,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   Widget build(BuildContext context) {
     final List<Widget> _screens = [
       const ReportsScreen(),
-      const DashboardScreen(),
+      DashboardScreen(widget.appsController, widget.monitoramentoController),
       ManageAppsScreen(widget.appsController, widget.monitoramentoController),
     ];
 

@@ -2,42 +2,59 @@ import 'package:flutter/material.dart';
 
 /*TESTE DE MONITORAMENTO*/
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:refocus/controllers/apps_controller.dart';
+import 'package:refocus/controllers/monitoramento_controller.dart';
+import 'package:refocus/objs/app_monitorado.dart';
+import 'package:refocus/utils/timeFormat.dart';import 'package:flutter/material.dart';
+import 'package:refocus/controllers/apps_controller.dart';
+import 'package:refocus/controllers/monitoramento_controller.dart';
+import 'package:refocus/objs/app_monitorado.dart';
+import 'package:refocus/utils/timeFormat.dart';
+
+class DashboardScreen extends StatefulWidget {
+  final AppsController? appsController;
+  final MonitoramentoController? monitoramentoController;
+
+  DashboardScreen(this.appsController, this.monitoramentoController, {Key? key})
+      : super(key: key);
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
 
 
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+class _DashboardScreenState extends State<DashboardScreen> {
+
+  List<AppMonitorado> _appsMonitorados = [];
+  Map<dynamic, dynamic> _dadosUso = {};
+
+  List<Map<String,dynamic>> _apps = [];
 
   static const MethodChannel usageChannel =  MethodChannel('com.refocus.app/usage');
 
-  Future<void> testarMonitoramento() async {
-    final permitido = await usageChannel.invokeMethod(
-    'checkUsagePermission',
-    );
+  Future<void> getMonitoredApps() async {
+    final appsMonitorados = await widget.appsController!.getMonitoredApps();
+    final dadosUso = await widget.monitoramentoController!.consultarUsoHoje(appsMonitorados);
 
-    print('Permissão Usage Access: $permitido');
+    setState(() {
+      _appsMonitorados = appsMonitorados;
+      _dadosUso = dadosUso;
 
-    if (permitido == false) {
-      try {
-        await usageChannel.invokeMethod('startMonitoring');
+      _apps.clear();
 
-        print('startMonitoring retornou sucesso');
-      } catch (e) {
-        print('ERRO ao iniciar monitoramento: $e');
+      for (var app in _appsMonitorados) {
+        _apps.add({
+          'name': app.name,
+          'package': app.packageName,
+          'used': timeFormat(_dadosUso[app.packageName] ?? 0),
+          'limit': timeFormat(app.tempoLimite!),
+          'status': 'Ativo',
+          'isBlocked': false,
+          'isExpanded': false,
+        });
       }
-      /*
-      await usageChannel.invokeMethod(
-      'openUsageSettings',
-      );
-      */
-
-      return;
-    }
-
-    await usageChannel.invokeMethod(
-      'startMonitoring',
-    );
-
-    print('Monitoramento iniciado');
+    });
   }
 
   @override
@@ -107,20 +124,13 @@ class DashboardScreen extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  /*const SizedBox(height: 16),
-                  _buildAppUsageRow('Instagram', '0h33', Icons.camera_alt),
+                  const SizedBox(height: 16),
+                  for (var app in _apps)
+                    _buildAppUsageRow(app['name'], app['used'], Icons.apps),
+                  /*_buildAppUsageRow('Instagram', '0h33', Icons.camera_alt),
                   _buildAppUsageRow('TikTok', '0h29', Icons.music_note),
                   _buildAppUsageRow('Whatsapp', '0h24', Icons.chat),*/
                 ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ElevatedButton(
-                onPressed: testarMonitoramento,
-                child: const Text('Testar monitoramento'),
               ),
             ),
           ],

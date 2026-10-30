@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Process
 import android.provider.Settings
 import java.util.Calendar
+import android.app.usage.UsageEvents
 
 object UsageStatsHelper {
 
@@ -58,7 +59,7 @@ object UsageStatsHelper {
             for (usageStat in stats) {
                 val totalTime = usageStat.totalTimeInForeground
                 // Filtra apenas apps com tempo de uso ativo maior que zero
-                if (totalTime > 0) {
+                if (totalTime >= 0) {
                     val item = mapOf(
                         "packageName" to usageStat.packageName,
                         "totalTime" to totalTime // Retorna em milissegundos
@@ -68,5 +69,37 @@ object UsageStatsHelper {
             }
         }
         return list
+    }
+
+    fun getCurrentApp(context: Context): String? {
+        if (!hasUsageStatsPermission(context)) {
+            return null;
+        }
+
+        val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+
+        val endTime = System.currentTimeMillis()
+
+        val startTime = endTime - 10_000
+
+        val events = usageStatsManager.queryEvents(startTime, endTime)
+
+        val event = UsageEvents.Event()
+
+        var currentPackage: String? = null
+        var lastTimestamp = 0L
+
+        while (events.hasNextEvent()) {
+            events.getNextEvent(event)
+
+            if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+                if (event.timeStamp > lastTimestamp) {
+                    lastTimestamp = event.timeStamp
+                    currentPackage = event.packageName
+                }
+            }
+        }
+
+        return currentPackage
     }
 }

@@ -1,7 +1,44 @@
 import 'package:flutter/material.dart';
 
+/*TESTE DE MONITORAMENTO*/
+import 'package:flutter/services.dart';
+
+
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
+
+  static const MethodChannel usageChannel =  MethodChannel('com.refocus.app/usage');
+
+  Future<void> testarMonitoramento() async {
+    final permitido = await usageChannel.invokeMethod(
+    'checkUsagePermission',
+    );
+
+    print('Permissão Usage Access: $permitido');
+
+    if (permitido == false) {
+      try {
+        await usageChannel.invokeMethod('startMonitoring');
+
+        print('startMonitoring retornou sucesso');
+      } catch (e) {
+        print('ERRO ao iniciar monitoramento: $e');
+      }
+      /*
+      await usageChannel.invokeMethod(
+      'openUsageSettings',
+      );
+      */
+
+      return;
+    }
+
+    await usageChannel.invokeMethod(
+      'startMonitoring',
+    );
+
+    print('Monitoramento iniciado');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +112,15 @@ class DashboardScreen extends StatelessWidget {
                   _buildAppUsageRow('TikTok', '0h29', Icons.music_note),
                   _buildAppUsageRow('Whatsapp', '0h24', Icons.chat),
                 ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ElevatedButton(
+                onPressed: testarMonitoramento,
+                child: const Text('Testar monitoramento'),
               ),
             ),
           ],

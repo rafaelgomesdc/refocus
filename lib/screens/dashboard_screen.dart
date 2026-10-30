@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 
 /*TESTE DE MONITORAMENTO*/
 import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
-import 'package:refocus/controllers/apps_controller.dart';
-import 'package:refocus/controllers/monitoramento_controller.dart';
-import 'package:refocus/objs/app_monitorado.dart';
-import 'package:refocus/utils/timeFormat.dart';import 'package:flutter/material.dart';
 import 'package:refocus/controllers/apps_controller.dart';
 import 'package:refocus/controllers/monitoramento_controller.dart';
 import 'package:refocus/objs/app_monitorado.dart';
@@ -32,6 +27,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<Map<String,dynamic>> _apps = [];
 
   static const MethodChannel usageChannel =  MethodChannel('com.refocus.app/usage');
+
+  @override
+  void initState() {
+    super.initState();
+    getMonitoredApps();
+  }
 
   Future<void> getMonitoredApps() async {
     final appsMonitorados = await widget.appsController!.getMonitoredApps();

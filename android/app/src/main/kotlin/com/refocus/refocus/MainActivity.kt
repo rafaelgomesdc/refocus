@@ -47,22 +47,22 @@ class MainActivity: FlutterActivity() {
         /*DADOS DE USO*/
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, USAGE_CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
-                "getCurrentApp" -> {
+                "getCurrentApp" -> { // Retorna o atual aplicativo exibido na tela
                     val app = UsageStatsHelper.getCurrentApp(this)
                     result.success(app)
                 }
-                "getUsageStats" -> {
+                "getUsageStats" -> { // Pega os dados de uso
                     val stats = UsageStatsHelper.getUsageStats(this)
                     result.success(stats)
                 }
-                "checkUsagePermission" -> {
+                "checkUsagePermission" -> { // Verifica a permissao de acesso aos dados de uso
                     result.success(UsageStatsHelper.hasUsageStatsPermission(this))
                 }
-                "openUsageSettings" -> {
+                "openUsageSettings" -> { // Abre as configuracoes
                     UsageStatsHelper.openUsageSettings(this)
                     result.success(true)
                 }
-                "startMonitoring" -> {
+                "startMonitoring" -> { // Inicia o monitoramento em segundo plano
 
                     android.util.Log.d(
                         "ReFocusMonitor",
@@ -75,7 +75,7 @@ class MainActivity: FlutterActivity() {
 
                     result.success(true)
                 }
-                "stopMonitoring" -> {
+                "stopMonitoring" -> { // Encerra o monitoramento em segundo plano
                     android.util.Log.d(
                         "ReFocusMonitor",
                         "========== STOP MONITORING CHAMADO =========="
@@ -98,7 +98,7 @@ class MainActivity: FlutterActivity() {
             flutterEngine.dartExecutor.binaryMessenger,
             APP_INFO_CHANNEL
         ).setMethodCallHandler { call, result -> when (call.method) {
-            "getInstalledApps" -> {
+            "getInstalledApps" -> { // Retorna os aplicativos instalados no dispositivo
                 val packageManager = packageManager
 
                 val apps = packageManager.getInstalledApplications(0).filter {

@@ -10,51 +10,30 @@ import 'package:refocus/config/database.dart';
 
 import 'package:refocus/config/permission.dart';
 
-const MethodChannel usageChannel = MethodChannel('com.refocus.app/usage');
+const MethodChannel usageChannel = MethodChannel('com.refocus.app/usage'); // MethodChannel para dados de uso
 
-Future<void> listarApps(AppsController appsController) async {
-  final apps = await appsController.getInstalledApps();
-
-  for (final app in apps) {
-    print("==========APPS==========");
-    print("App name: " + app.name!);
-    print("Package name: " + app.packageName!);
-    print("========================");
-  }
-  final monitoredApps = await appsController.getMonitoredApps();
-
-  print("CARREGAR APPS MONITORADOS");
-  for (final app in monitoredApps) {
-    print("=====APPS MONITORADOS=====");
-    print(app);
-    print("==========================");
-  }
-  print("FIM - CARREGAR APPS MONITORADOS");
-}
-
-/*FUNCAO PARA TESTE DE MONITORAMENTO*/
 Future<void> startMonitoring() async {
+  // Chama o inicio do monitoramento nativo via MethodChannel
   await usageChannel.invokeMethod('startMonitoring',);
 }
-/*FIM - FUNCAO TESTE*/
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); //Inicializa o flutter para depois chamar MethodChannel
+  WidgetsFlutterBinding.ensureInitialized(); // Inicializa o flutter para depois chamar MethodChannel
+
   final appsController = AppsController(await accessDatabase());
   final monitoramentoController = MonitoramentoController();
 
-  //await listarApps(appsController);
+  await startMonitoring(); // Inicia o monitoramento
 
-  /*TESTE DE MONITORAMENTO*/
-  await startMonitoring();
-  /*FIM - TESTE*/
+  final permissions = await checkPermissions(); // Chama a verificacao de permissoes necessarias
 
-  final permissions = await checkPermissions();
+  /* DEPURACAO */
   print("=====PERMISSÃO DE DADOS DE USO=====");
   print(permissions);
   print("===FIM PERMISSÃO DE DADOS DE USO===");
+  /* FIM - DEPURACAO */
 
-  await appsController.getInstalledApps();
+  await appsController.getInstalledApps(); // Atualiza os aplicativos instalados no banco de dados
 
   runApp(ReFocusApp(appsController, monitoramentoController));
 }

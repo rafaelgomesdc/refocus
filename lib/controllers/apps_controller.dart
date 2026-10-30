@@ -12,9 +12,9 @@ class AppsController {
 
   /*METODO DE CONSULTA NO DISPOSITIVO*/
   Future<List<App>> getInstalledApps() async {
-    //Pega os aplicativos instalados direto do dispositivo
+    // Pega os aplicativos instalados direto do dispositivo e registra/atualiza os aplicativos instalados no banco de dados
     final apps = await appsModel!.getInstalledApps();
-    storeInstalledApps(apps);
+    storeInstalledApps(apps); // Registra/atualiza os aplicativos instalados no banco de dados
 
     return apps;
   }
@@ -25,7 +25,6 @@ class AppsController {
   }
 
   Future<void> storeMonitoredApp(packageName, tempoLimite) async {
-    //Lógica para gravar app monitorado no banco de dados
     await appsModel!.storeMonitoredApp(packageName, tempoLimite);
   }
 
@@ -37,7 +36,6 @@ class AppsController {
   }
 
   Future<List<AppMonitorado>> getMonitoredApps() async {
-    //final query = await appsModel!.queryAppsMonitorados();
     final List<AppMonitorado> monitoredApps = await appsModel!.queryAppsMonitorados();
 
     return monitoredApps;

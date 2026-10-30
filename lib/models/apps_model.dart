@@ -94,7 +94,7 @@ class AppsModel {
 
   /*METODOS PARA REMOVER DO BANCO DE DADOS*/
   Future<void> dropMonitoredApp(String package) async {
-    //Logica para remover app monitorado
+    // Remove o app monitorado 'package'
     await db.delete(
       'apps_monitorados',
       where: 'apps_package = ?',

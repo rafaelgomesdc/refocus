@@ -16,11 +16,10 @@ class ManageAppsScreen extends StatefulWidget {
 
 class _ManageAppsScreenState extends State<ManageAppsScreen> {
   List? _appsInstalados = [];
-  List<AppMonitorado> _appsMonitorados = []; //widget.appsController!.getMonitoredApps();
+  List<AppMonitorado> _appsMonitorados = [];
   Map<dynamic, dynamic> _dadosUso = {};
 
-  // Lista de simulação de apps monitorados
-  List<Map<String, dynamic>> _apps = [];
+  List<Map<String, dynamic>> _apps = []; // Lista de apps monitorados. A tela carrega os apps por essa lista
 
   @override
   void initState() {
@@ -28,39 +27,12 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
     getMonitoredApps();
   }
 
-
-  /*final List<Map<String, dynamic>> _apps = [
-    {
-      'name': 'Instagram',
-      'used': '1h30',
-      'limit': '1h30',
-      'status': 'Bloqueado (limite de tempo atingido)',
-      'isBlocked': true,
-      'isExpanded': false,
-    },
-    {
-      'name': 'TikTok',
-      'used': '0h47',
-      'limit': '1h00',
-      'status': 'Ativo',
-      'isBlocked': false,
-      'isExpanded': false,
-    },
-    {
-      'name': 'YouTube',
-      'used': '0h00',
-      'limit': '0h30',
-      'status': 'Ativo',
-      'isBlocked': false,
-      'isExpanded': false,
-    },
-  ];*/
-
   Future<void> getInstalledApps() async {
     this._appsInstalados = await widget.appsController!.consultInstalledApps();
   }
 
   Future<void> getMonitoredApps() async {
+    // Consulta os aplicativos monitorados e formata em uma lista para serem carregados na tela
     final appsMonitorados = await widget.appsController!.getMonitoredApps();
     final dadosUso = await widget.monitoramentoController!.consultarUsoHoje(appsMonitorados);
 

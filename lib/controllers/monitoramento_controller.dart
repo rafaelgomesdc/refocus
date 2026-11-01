@@ -21,18 +21,13 @@ class MonitoramentoController {
     const MethodChannel _channel = MethodChannel('com.refocus.app/usage');
     var appsUsageData = await _channel.invokeMethod('getUsageStats');
     Map<dynamic, dynamic> _appsTimeList = {};
-
     for (var app in appsUsageData) {
-      for (var appMonitorado in _appsMonitorados)
+      for (var appMonitorado in _appsMonitorados) {
         if (app['packageName'] == appMonitorado.packageName) {
-          /*var appTimeData = {
-            appMonitorado.packageName: app['totalTime'],
-          };*/
-          if (app['totalTime'] == null) {
-            app['totalTime'] = 0;
-          }
-          _appsTimeList[app['packageName']] = app['totalTime'];
+          final totalTime = (app['totalTime'] as int?) ?? 0;
+          _appsTimeList[app['packageName']] = (_appsTimeList[app['packageName']] ?? 0) + totalTime;
         }
+      }
     }
 
     return _appsTimeList;

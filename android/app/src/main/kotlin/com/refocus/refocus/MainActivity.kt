@@ -12,7 +12,7 @@ import android.util.Log
 //UsageStats
 import android.content.Intent
 
-class MainActivity: FlutterActivity() {
+class  MainActivity: FlutterActivity() {
     private val USAGE_CHANNEL = "com.refocus.app/usage"
     private val APP_INFO_CHANNEL = "com.refocus/app_info" //channel para acessar os packages
 

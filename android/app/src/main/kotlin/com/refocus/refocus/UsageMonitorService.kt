@@ -13,6 +13,8 @@ import android.os.Looper
 
 import android.util.Log
 
+//import UsageDatabase
+
 private const val TAG = "ReFocusMonitor"
 
 class UsageMonitorService : Service() {
@@ -117,6 +119,27 @@ class UsageMonitorService : Service() {
         Log.d(TAG, "Duracao: $duration segundos")
 
         // Lógica para registrar no banco de dados
+        val banco = UsageDatabase(applicationContext)
+
+        try {
+            val agora = System.currentTimeMillis()
+            val inicio = agora - 60_000L
+
+            val id = banco.registrarSessao(
+                packageName = (currentPackage ?: ""),
+                inicio = inicio,
+                fim = agora
+            )
+
+            if (id > 0) {
+                Log.d(
+                    "ReFocus",
+                    "Sessao registrada: $id"
+                )
+            }
+        } finally {
+            banco.fechar()
+        }
 
         sessionStart = 0L
     }

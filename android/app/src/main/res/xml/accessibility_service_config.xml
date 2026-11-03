@@ -3,5 +3,13 @@
     android:accessibilityEventTypes="typeWindowStateChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:accessibilityFlags="flagDefault"
+    android:notificationTimeout="100"
+    android:canRetrieveWindowContent="false"
+    android:description="@string/accessibility_service_description" />
+    <!--
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault"
     android:canRetrieveWindowContent="true"
     android:description="@string/accessibility_service_description" />
+    -->

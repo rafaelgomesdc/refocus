@@ -11,8 +11,9 @@
   <component name="ChangeListManager">
     <list default="true" id="ea19f811-81b8-4d45-af42-12962576a4d7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/kotlin/com/refocus/refocus/UsageDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/kotlin/com/refocus/refocus/UsageDatabase.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/kotlin/com/refocus/refocus/UsageMonitorService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/kotlin/com/refocus/refocus/UsageMonitorService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/kotlin/com/refocus/refocus/AppBlockerService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/kotlin/com/refocus/refocus/AppBlockerService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/xml/accessibility_service_config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/xml/accessibility_service_config.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +89,7 @@
     "cidr.known.project.marker": "true",
     "com.google.services.firebase.aqiPopupShown": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "feature/monitorar-uso",
+    "git-widget-placeholder": "feature/bloquear-app",
     "io.flutter.project.isFirstOpen": "true",
     "io.flutter.reload.alreadyRun": "true",
     "kotlin-language-version-configured": "true",

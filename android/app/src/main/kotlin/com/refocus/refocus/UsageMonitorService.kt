@@ -65,6 +65,15 @@ class UsageMonitorService : Service() {
         return START_STICKY
     }
 
+    private fun checkLimit() {
+        // Logica para verificar se o app esta dentro do limite de tempo
+        /*
+        * 1 - Pegar o tempo limite no banco de dados
+        * 2 - Comparar o tempo limite com o tempo de uso atual
+        * 3 - Se tempo > limite = bloquear app
+        */
+    }
+
     /*PRE EXISTENTE*/
     private fun monitorUsage() {
 

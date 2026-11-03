@@ -24,6 +24,8 @@ class UsageMonitorService : Service() {
     private var sessionStart: Long = 0L
     /*FIM*/
 
+    private var appsMonitorados = mutableMapOf<String, Int>()
+
     private lateinit var monitorThread: Thread
 
     private val handler = Handler(Looper.getMainLooper())
@@ -62,16 +64,58 @@ class UsageMonitorService : Service() {
         monitorThread.start()
         /*FIM*/
 
+        appsMonitorados = getMonitoredAppsData() // Carrega os apps monitorados pela primeira vez
+
         return START_STICKY
     }
 
-    private fun checkLimit() {
+    private fun checkLimit(packageName: String?): Boolean {
         // Logica para verificar se o app esta dentro do limite de tempo
         /*
         * 1 - Pegar o tempo limite no banco de dados
         * 2 - Comparar o tempo limite com o tempo de uso atual
         * 3 - Se tempo > limite = bloquear app
         */
+        val _packageName = packageName ?: return false
+        val timeList = UsageStatsHelper.getUsageStats(applicationContext)
+
+        for (app in timeList) {
+            if (app["packageName"] == _packageName) {
+                val tempoTotal = (app["totalTime"] as? Number)?.toLong() ?: 0L
+                val tempoLimite = appsMonitorados[_packageName]?.toLong() ?: return false
+
+                if (tempoTotal >= tempoLimite) {
+                    val db = UsageDatabase(applicationContext)
+
+                    try {
+                        db.bloquearApp(_packageName)
+                    } finally {
+                        db.fechar()
+                    }
+
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    fun getMonitoredAppsData(): MutableMap<String, Int> {
+        val db = UsageDatabase(applicationContext)
+        var appsMonitorados = mutableMapOf<String, Int>()
+
+        try {
+            appsMonitorados = db.getMonitoredApps()
+        } finally {
+            db.fechar()
+        }
+
+        return appsMonitorados
+    }
+
+    fun closeApp() {
+        AppBlockerService.instance?.closeApp()
     }
 
     /*PRE EXISTENTE*/
@@ -89,6 +133,10 @@ class UsageMonitorService : Service() {
                     Log.w(TAG, "Nenhum aplicativo identificado. Mantendo estado anterior")
 
                     Thread.sleep(1000)
+
+                    if (checkLimit(currentPackage))
+                        closeApp()
+
                     continue
                 }
                 /* FIM - DEPURACAO */
@@ -98,6 +146,8 @@ class UsageMonitorService : Service() {
                 if (packageName != currentPackage) {
                     // Encerrar sessao anterior
                     if (currentPackage != null && sessionStart > 0) {
+                        if (currentPackage == "com.refocus.refocus")
+                            appsMonitorados = getMonitoredAppsData() // Recarrega os apps monitorados apos possiveis alteracoes
                         closeSession()
                     }
 
@@ -109,6 +159,8 @@ class UsageMonitorService : Service() {
                 }
 
                 Thread.sleep(1000)
+
+                checkLimit(currentPackage)
             } catch (e: Exception) {
                 //e.printStackTrace()
 
@@ -128,13 +180,13 @@ class UsageMonitorService : Service() {
         Log.d(TAG, "Duracao: $duration segundos")
 
         // Lógica para registrar no banco de dados
-        val banco = UsageDatabase(applicationContext)
+        val db = UsageDatabase(applicationContext)
 
         try {
             val agora = System.currentTimeMillis()
             val inicio = agora - 60_000L
 
-            val id = banco.registrarSessao(
+            val id = db.registrarSessao(
                 packageName = (currentPackage ?: ""),
                 inicio = inicio,
                 fim = agora
@@ -147,7 +199,7 @@ class UsageMonitorService : Service() {
                 )
             }
         } finally {
-            banco.fechar()
+            db.fechar()
         }
 
         sessionStart = 0L

@@ -6,7 +6,14 @@ import android.util.Log
 
 class AppBlockerService : AccessibilityService() {
     val TAG = "AppBlockerService"
+    private lateinit var database: UsageDatabase
+    var blockedPackages = mutableSetOf<String>()
 
+    companion object {
+        var instance: AppBlockerService? = null
+    }
+
+    /*
     companion object {
         // Lista estática temporária para fins de teste.
         // Contém os IDs de pacotes do Instagram e TikTok (Musically).
@@ -17,11 +24,22 @@ class AppBlockerService : AccessibilityService() {
             "com.google.android.apps.youtube.creator" // YT Studio
         )
     }
+    */
 
     override fun onServiceConnected() {
         super.onServiceConnected()
 
+        instance = this
+
+        database = UsageDatabase(applicationContext)
+        blockedPackages = database.getBlockedPackages()
+
         Log.i(TAG, "SERVICO INICIALIZADO COM SUCESSO!")
+        Log.d(TAG, "Apps bloqueados: $blockedPackages")
+    }
+
+    fun closeApp() {
+        performGlobalAction(GLOBAL_ACTION_HOME)
     }
 
     fun getBlockedList() {
@@ -53,5 +71,11 @@ class AppBlockerService : AccessibilityService() {
 
     override fun onInterrupt() {
         Log.e("AppBlockerService", "Serviço de acessibilidade foi interrompido.")
+    }
+
+    override fun onDestroy() {
+        instance = null
+        database.fechar()
+        super.onDestroy()
     }
 }

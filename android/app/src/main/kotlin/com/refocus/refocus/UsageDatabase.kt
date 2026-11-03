@@ -100,6 +100,93 @@ class UsageDatabase(context: Context) {
         }
     }
 
+    fun getBlockedPackages(): MutableSet<String> {
+        val blockedPackages = mutableSetOf<String>()
+
+        val cursor = db.rawQuery(
+            """
+                SELECT apps_package
+                FROM apps_monitorados
+                WHERE bloqueado = 1
+            """.trimIndent(),
+            null
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                blockedPackages.add(it.getString(0))
+            }
+        }
+
+        return blockedPackages
+    }
+
+    fun getMonitoredApps(): MutableMap<String, Int> {
+        val appsMonitorados = mutableMapOf<String, Int>()
+
+        val cursor = db.rawQuery(
+            """
+                SELECT apps_package, tempo_limite
+                FROM apps_monitorados
+            """.trimIndent(),
+            null
+        )
+
+        cursor.use {
+            while(it.moveToNext()) {
+                val packageName = it.getString(
+                    it.getColumnIndexOrThrow("apps_package")
+                )
+
+                val tempoLimite = it.getInt(
+                    it.getColumnIndexOrThrow("tempo_limite")
+                )
+
+                appsMonitorados[packageName] = tempoLimite
+            }
+        }
+
+        return appsMonitorados
+    }
+
+    fun bloquearApp(packageName: String): Boolean {
+        /*
+        * Bloqueia o aplicativo referente ao 'packageName'
+        * Só deve ser chamado quando o tempo limite do app for excedido
+        */
+        val valores = ContentValues().apply {
+            put("bloqueado", 1)
+        }
+
+        val linhasAfetadas = db.update(
+            "apps_monitorados",
+            valores,
+            "apps_package = ?",
+            arrayOf(packageName)
+        )
+
+        return linhasAfetadas > 0
+    }
+
+    fun desbloquearApp(packageName: String): Boolean {
+        /*
+        * Desbloqueia o aplicativo referente ao 'packageName'
+        * Deve ser chamado quando o tempo limite for aumentado (além do tempo de uso) ou na troca de dias
+        */
+        val valores = ContentValues().apply {
+            put("bloqueado", 0)
+        }
+
+        val linhasAfetadas = db.update(
+            "apps_monitorados",
+            valores,
+            "apps_package = ?",
+            arrayOf(packageName)
+        )
+
+        return linhasAfetadas > 0
+    }
+
     fun fechar() {
         if (db.isOpen) {
             db.close()

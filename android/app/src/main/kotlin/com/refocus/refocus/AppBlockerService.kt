@@ -52,8 +52,12 @@ class AppBlockerService : AccessibilityService() {
         * 2 - Retornar uma lista de packages
         */
         database = UsageDatabase(applicationContext)
-        blockedPackages = database.getBlockedPackages()
-        database.fechar()
+
+        try {
+            blockedPackages = database.getBlockedPackages()
+        } finally {
+            database.fechar()
+        }
     }
 
     // Metodo chamado pelo sistema sempre que ocorre um evento relevante (ex: abertura de app)
@@ -81,7 +85,11 @@ class AppBlockerService : AccessibilityService() {
 
     override fun onDestroy() {
         instance = null
-        database.fechar()
+
+        if (::database.isInitialized) {
+            database.fechar()
+        }
+
         super.onDestroy()
     }
 }

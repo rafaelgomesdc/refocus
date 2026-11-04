@@ -20,13 +20,14 @@ private const val TAG = "ReFocusMonitor"
 class UsageMonitorService : Service() {
     /*MONITORAMENTO PRE EXISTENTE*/
     private var monitoring = false
+    private var monitorThread: Thread? = null
     private var currentPackage: String? = null
     private var sessionStart: Long = 0L
     /*FIM*/
 
     private var appsMonitorados = mutableMapOf<String, Int>()
 
-    private lateinit var monitorThread: Thread
+    //private lateinit var monitorThread: Thread
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -48,6 +49,7 @@ class UsageMonitorService : Service() {
         handler.post(monitorLog)
     }
 
+    /* TESTE DEBUG */
     override fun onStartCommand(
         intent: Intent?,
         flags: Int,
@@ -57,16 +59,34 @@ class UsageMonitorService : Service() {
 
         /*PRE EXISTENTE*/
         createNotification()
-        monitoring = true
-        monitorThread = Thread {
-            monitorUsage()
-        }
-        monitorThread.start()
+        //monitoring = true
+        //monitorThread = Thread {
+        //    monitorUsage()
+        //}
+        //monitorThread.start()
         /*FIM*/
 
         appsMonitorados = getMonitoredAppsData() // Carrega os apps monitorados pela primeira vez
+        startMonitoringthread()
 
         return START_STICKY
+    }
+
+    /* TESTE DEBUG */
+    private fun startMonitoringthread() {
+        if (monitorThread?.isAlive == true) {
+            Log.w(TAG, "Monitoramento ja esta em execucao.")
+            return
+        }
+
+        monitoring = true
+
+        monitorThread = Thread {
+            monitorUsage()
+        }.apply {
+            name = "Refocus-Monitor"
+            start()
+        }
     }
 
     private fun checkLimit(packageName: String?) {
@@ -154,10 +174,18 @@ class UsageMonitorService : Service() {
                 Thread.sleep(1000)
 
                 checkLimit(currentPackage) // Verifica limite e bloqueia/fecha o app se aplicavel
-            } catch (e: Exception) {
-                //e.printStackTrace()
+            } catch (e: InterruptedException) {
+                Log.d(TAG, "Thread de monitoramento interrompida")
+                break
 
+            } catch (e: Exception) {
                 Log.e(TAG, "Erro durante monitoramento", e)
+
+                try {
+                    Thread.sleep(1000)
+                } catch (interrupted: InterruptedException) {
+                    break
+                }
             }
         }
 

@@ -69,20 +69,19 @@ class UsageMonitorService : Service() {
         return START_STICKY
     }
 
-    private fun checkLimit(packageName: String?): Boolean {
-        // Logica para verificar se o app esta dentro do limite de tempo
+    private fun checkLimit(packageName: String?) {
         /*
         * 1 - Pegar o tempo limite no banco de dados
         * 2 - Comparar o tempo limite com o tempo de uso atual
-        * 3 - Se tempo > limite = bloquear app
+        * 3 - Se tempo > limite = fechar e bloquear app
         */
-        val _packageName = packageName ?: return false
+        val _packageName = packageName ?: return
         val timeList = UsageStatsHelper.getUsageStats(applicationContext)
 
         for (app in timeList) {
             if (app["packageName"] == _packageName) {
                 val tempoTotal = (app["totalTime"] as? Number)?.toLong() ?: 0L
-                val tempoLimite = appsMonitorados[_packageName]?.toLong() ?: return false
+                val tempoLimite = appsMonitorados[_packageName]?.toLong() ?: return
 
                 if (tempoTotal >= tempoLimite) {
                     val db = UsageDatabase(applicationContext)
@@ -93,12 +92,11 @@ class UsageMonitorService : Service() {
                         db.fechar()
                     }
 
-                    return true
+                    AppBlockerService.instance?.closeApp()
+                    AppBlockerService.instance?.updateBlockedList()
                 }
             }
         }
-
-        return false
     }
 
     fun getMonitoredAppsData(): MutableMap<String, Int> {
@@ -112,10 +110,6 @@ class UsageMonitorService : Service() {
         }
 
         return appsMonitorados
-    }
-
-    fun closeApp() {
-        AppBlockerService.instance?.closeApp()
     }
 
     /*PRE EXISTENTE*/
@@ -134,9 +128,7 @@ class UsageMonitorService : Service() {
 
                     Thread.sleep(1000)
 
-                    if (checkLimit(currentPackage))
-                        closeApp()
-                        AppBlockerService.instance?.updateBlockedList()
+                    checkLimit(currentPackage) // Verifica limite e bloqueia/fecha o app se aplicavel
 
                     continue
                 }
@@ -161,9 +153,7 @@ class UsageMonitorService : Service() {
 
                 Thread.sleep(1000)
 
-                if (checkLimit(currentPackage))
-                    closeApp()
-                    AppBlockerService.instance?.updateBlockedList()
+                checkLimit(currentPackage) // Verifica limite e bloqueia/fecha o app se aplicavel
             } catch (e: Exception) {
                 //e.printStackTrace()
 

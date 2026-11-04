@@ -1,6 +1,7 @@
 import 'package:refocus/models/apps_model.dart';
 import 'package:refocus/objs/app.dart';
 import 'package:refocus/objs/app_monitorado.dart';
+import 'package:flutter/services.dart';
 //import 'package:refocus/database/temp_database.json';
 class AppsController {
 
@@ -26,6 +27,7 @@ class AppsController {
 
   Future<void> storeMonitoredApp(packageName, tempoLimite) async {
     await appsModel!.storeMonitoredApp(packageName, tempoLimite);
+    updateBlockedList();
   }
 
   /*METODOS PARA CONSULTAS NO BANCO DE DADOS*/
@@ -44,5 +46,11 @@ class AppsController {
   /*METODOS PARA REMOVER DO BANCO DE DADOS*/
   Future<void> removeMonitoredApp(String package) async {
     appsModel!.dropMonitoredApp(package);
+    updateBlockedList();
+  }
+
+  void updateBlockedList() {
+    const MethodChannel _channel = MethodChannel('com.refocus.app/usage');
+    _channel.invokeMethod('updateBlockedList');
   }
 }

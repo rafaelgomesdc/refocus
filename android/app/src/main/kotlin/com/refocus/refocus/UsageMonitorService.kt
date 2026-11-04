@@ -136,6 +136,7 @@ class UsageMonitorService : Service() {
 
                     if (checkLimit(currentPackage))
                         closeApp()
+                        AppBlockerService.instance?.updateBlockedList()
 
                     continue
                 }
@@ -160,7 +161,9 @@ class UsageMonitorService : Service() {
 
                 Thread.sleep(1000)
 
-                checkLimit(currentPackage)
+                if (checkLimit(currentPackage))
+                    closeApp()
+                    AppBlockerService.instance?.updateBlockedList()
             } catch (e: Exception) {
                 //e.printStackTrace()
 

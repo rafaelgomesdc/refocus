@@ -31,8 +31,11 @@ class AppBlockerService : AccessibilityService() {
 
         instance = this
 
+        /*
         database = UsageDatabase(applicationContext)
         blockedPackages = database.getBlockedPackages()
+        */
+        updateBlockedList()
 
         Log.i(TAG, "SERVICO INICIALIZADO COM SUCESSO!")
         Log.d(TAG, "Apps bloqueados: $blockedPackages")
@@ -42,12 +45,15 @@ class AppBlockerService : AccessibilityService() {
         performGlobalAction(GLOBAL_ACTION_HOME)
     }
 
-    fun getBlockedList() {
+    fun updateBlockedList() {
         // Logica para consultar os aplicativos bloqueados
         /*
         * 1 - Consultar no banco de dados
         * 2 - Retornar uma lista de packages
         */
+        database = UsageDatabase(applicationContext)
+        blockedPackages = database.getBlockedPackages()
+        database.fechar()
     }
 
     // Metodo chamado pelo sistema sempre que ocorre um evento relevante (ex: abertura de app)

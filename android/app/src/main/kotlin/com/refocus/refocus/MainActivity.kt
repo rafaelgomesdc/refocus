@@ -62,6 +62,10 @@ class  MainActivity: FlutterActivity() {
                     UsageStatsHelper.openUsageSettings(this)
                     result.success(true)
                 }
+                "updateBlockedList" -> { // Atualiza a lista de aplicativo bloqueados no 'AppBlockerService'
+                    AppBlockerService.instance?.updateBlockedList()
+                    result.success(true)
+                }
                 "startMonitoring" -> { // Inicia o monitoramento em segundo plano
 
                     android.util.Log.d(

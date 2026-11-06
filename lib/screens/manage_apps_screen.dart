@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:refocus/controllers/apps_controller.dart';
 import 'package:refocus/controllers/monitoramento_controller.dart';
@@ -59,6 +61,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
   void _showTimeLimitDialog(
       String appName,
       String packageName,
+      bool isEditing,
       ) {
     final TextEditingController timeController =
     TextEditingController();
@@ -120,11 +123,16 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
             ElevatedButton(
               onPressed: () async {
                 //Lógica para registrar no banco de dados
+                var tempoLimite = (int.parse(timeController.text) * 60000);
                 if (timeController.text.isEmpty) {
                   return;
                 }
 
-                await widget.appsController!.storeMonitoredApp(packageName, (int.parse(timeController.text) * 60000));
+                if (isEditing == true){
+                  await widget.appsController!.updateTempoLimite(packageName, tempoLimite);
+                } else {
+                  await widget.appsController!.storeMonitoredApp(packageName, tempoLimite);
+                }
 
                 await getMonitoredApps();
 
@@ -184,6 +192,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
                         _showTimeLimitDialog(
                           appName,
                           packageName,
+                          false,
                         );
                       },
                     );
@@ -282,6 +291,11 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
                                   TextButton(
                                     onPressed: () {
                                       // Logica para editar limite
+                                      _showTimeLimitDialog(
+                                        app['name'],
+                                        app['package'],
+                                        true,
+                                      );
                                     },
                                     child: const Text('Editar Limite'),
                                   ),

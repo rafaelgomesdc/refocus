@@ -53,4 +53,9 @@ class AppsController {
     const MethodChannel _channel = MethodChannel('com.refocus.app/usage');
     _channel.invokeMethod('updateBlockedList');
   }
+
+  /*METODOS PARA ATUALIZAR O BANCO DE DADOS*/
+  Future<void> updateTempoLimite(String packageName, int tempoLimite) async {
+    await appsModel!.updateTempoLimite(packageName, tempoLimite);
+  }
 }

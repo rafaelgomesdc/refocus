@@ -34,7 +34,6 @@ class AppsModel {
       },
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
-
     }
   }
 
@@ -44,7 +43,7 @@ class AppsModel {
       'apps_package': packageName,
       'tempo_limite': tempoLimite
     },
-    conflictAlgorithm: ConflictAlgorithm.ignore,
+      conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
 
@@ -99,6 +98,18 @@ class AppsModel {
       'apps_monitorados',
       where: 'apps_package = ?',
       whereArgs: [package],
+    );
+  }
+
+  /*METODOS PARA ATUALIZAR BANCO DE DADOS*/
+  Future<void> updateTempoLimite(String packageName, int tempoLimite) async {
+    await db.update(
+      'apps_monitorados',
+      {
+        'tempo_limite': tempoLimite,
+      },
+      where: 'apps_package = ?',
+      whereArgs: [packageName],
     );
   }
 }

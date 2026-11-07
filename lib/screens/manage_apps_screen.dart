@@ -37,8 +37,9 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
 
     for (var app in appsInstalados) {
       final monitored = await isMonitored(appsMonitorados, app);
+      final system = await isSystemApp(app);
 
-      if (!monitored) {
+      if (!monitored && !system) {
         listAppsInstalados.add(app);
       }
     }
@@ -51,6 +52,27 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
   Future<bool> isMonitored(List<AppMonitorado> appsMonitorados, var app) async {
     for (var appMonitorado in appsMonitorados) {
       if (appMonitorado.packageName == app.packageName){
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  Future<bool> isSystemApp(var app) async {
+    List<String> systemPackages = [
+      "refocus",
+      "samsung",
+      "com.sec.android",
+      "miui",
+      "br.gov",
+      "xiaomi",
+      "com.mi.",
+      "microsoft"
+    ];
+
+    for (var package in systemPackages) {
+      if (app.packageName.contains(package)) {
         return true;
       }
     }

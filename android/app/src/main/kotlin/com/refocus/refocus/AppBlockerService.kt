@@ -31,10 +31,6 @@ class AppBlockerService : AccessibilityService() {
 
         instance = this
 
-        /*
-        database = UsageDatabase(applicationContext)
-        blockedPackages = database.getBlockedPackages()
-        */
         updateBlockedList()
 
         Log.i(TAG, "SERVICO INICIALIZADO COM SUCESSO!")
@@ -69,7 +65,7 @@ class AppBlockerService : AccessibilityService() {
                 Log.d(TAG, "Usuário abriu o app: $packageName")
 
                 // Se o aplicativo aberto estiver na lista de bloqueados (tempo limite atingido)
-                if (/*getBlockedList*/blockedPackages.contains(packageName)) {
+                if (blockedPackages.contains(packageName)) {
                     Log.w(TAG, "App bloqueado detectado! Redirecionando para a Home.")
 
                     // Executa a ação global de pressionar o botão Home do Android, saindo do app

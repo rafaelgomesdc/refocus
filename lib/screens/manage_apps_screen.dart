@@ -30,7 +30,32 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
   }
 
   Future<void> getInstalledApps() async {
-    this._appsInstalados = await widget.appsController!.consultInstalledApps();
+    final appsInstalados = await widget.appsController!.consultInstalledApps();
+    final appsMonitorados = await widget.appsController!.getMonitoredApps();
+
+    List? listAppsInstalados = [];
+
+    for (var app in appsInstalados) {
+      final monitored = await isMonitored(appsMonitorados, app);
+
+      if (!monitored) {
+        listAppsInstalados.add(app);
+      }
+    }
+
+    setState(() {
+      _appsInstalados = listAppsInstalados;
+    });
+  }
+
+  Future<bool> isMonitored(List<AppMonitorado> appsMonitorados, var app) async {
+    for (var appMonitorado in appsMonitorados) {
+      if (appMonitorado.packageName == app.packageName){
+        return true;
+      }
+    }
+
+    return false;
   }
 
   Future<void> getMonitoredApps() async {

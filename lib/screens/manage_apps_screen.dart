@@ -24,6 +24,7 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
 
   @override
   void initState() {
+
     super.initState();
     getMonitoredApps();
   }

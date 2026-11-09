@@ -20,8 +20,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // ALTERADO: era 1
       onCreate: _createDB,
+      onUpgrade: _upgradeDB, // NOVO: cria a tabela nova em quem já tem o app instalado
       onConfigure: _onConfigure,
     );
   }
@@ -29,6 +30,25 @@ class DatabaseHelper {
   Future _onConfigure(Database db) async {
     // Habilita suporte a chaves estrangeiras
     await db.execute('PRAGMA foreign_keys = ON');
+  }
+
+  // NOVO: migração da versão 1 para a 2
+  Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await _createUsoDiario(db);
+    }
+  }
+
+  // NOVO: histórico do tempo de uso por dia e por app
+  Future _createUsoDiario(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS uso_diario (
+        data TEXT NOT NULL,
+        apps_package VARCHAR(45) NOT NULL,
+        tempo_total INTEGER NOT NULL,
+        PRIMARY KEY (data, apps_package)
+      )
+    ''');
   }
 
   Future _createDB(Database db, int version) async {
@@ -97,6 +117,9 @@ class DatabaseHelper {
         FOREIGN KEY (relatorio_diario_date) REFERENCES relatorio_diario (date) ON DELETE CASCADE
       )
     ''');
+
+    // 7. NOVO: Tabela uso_diario
+    await _createUsoDiario(db);
   }
 
   // Exemplo de métodos auxiliares de CRUD podem ser adicionados aqui conforme o desenvolvimento avança

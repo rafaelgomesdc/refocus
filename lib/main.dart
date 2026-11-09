@@ -132,7 +132,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _screens = [
-      const ReportsScreen(),
+      ReportsScreen(widget.appsController), // ALTERADO: agora recebe o appsController
       DashboardScreen(widget.appsController, widget.monitoramentoController),
       ManageAppsScreen(widget.appsController, widget.monitoramentoController),
     ];

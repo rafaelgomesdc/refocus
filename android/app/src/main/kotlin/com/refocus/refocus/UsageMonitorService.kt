@@ -132,7 +132,7 @@ class UsageMonitorService : Service() {
                 val tempoTotal = (app["totalTime"] as? Number)?.toLong() ?: 0L
                 val tempoLimite = appsMonitorados[_packageName]?.toLong() ?: return
 
-                if (tempoTotal >= tempoLimite) {
+                if (tempoTotal >= tempoLimite && _packageName !in blockedPackages) {
                     val db = UsageDatabase(applicationContext)
 
                     try {
@@ -141,8 +141,17 @@ class UsageMonitorService : Service() {
                         db.fechar()
                     }
 
+                    // Envia notificação
+                    showNotification(
+                        title = "Limite de uso atingido!",
+                        message = "O aplicativo foi bloqueado pelo ReFocus."
+                    )
+
                     AppBlockerService.instance?.closeApp()
                     AppBlockerService.instance?.updateBlockedList()
+
+                    // Atualiza a lista em memória
+                    blockedPackages.add(_packageName)
                 }
             }
         }
@@ -358,6 +367,74 @@ class UsageMonitorService : Service() {
 
         Log.d(TAG, "Serviço promovido a primeiro plano")
     }
+
+    /* TESTE DE NOTIFICAÇÃO */
+    fun showNotification(
+        title: String,
+        message: String
+    ) {
+        // Verifica a permissão no Android 13+
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (checkSelfPermission(
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.w(TAG, "Permissão de notificação não concedida")
+                return
+            }
+        }
+
+        val channelId = "refocus_alerts"
+
+        val manager = getSystemService(
+            NotificationManager::class.java
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Alertas do ReFocus",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            channel.description = "Alertas sobre o uso de aplicativos"
+
+            manager.createNotificationChannel(channel)
+        }
+
+        val notification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification.Builder(this, channelId)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                .setAutoCancel(true)
+                .build()
+        } else {
+            @Suppress("DEPRECATION")
+            Notification.Builder(this)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                .setAutoCancel(true)
+                .setPriority(Notification.PRIORITY_HIGH)
+                .build()
+        }
+
+        manager.notify(
+            1001,
+            notification
+        )
+
+        Log.d(TAG, "Notificação enviada: $title")
+    }
+
+    fun testNotification() {
+        showNotification(
+            title = "Hello, world!",
+            message = "O ReFocus conseguiu enviar uma notificação."
+        )
+    }
+    /* FIM - TESTE DE NOTIFICAÇÃO */
 
     override fun onBind(intent: Intent?): IBinder? {
         return null

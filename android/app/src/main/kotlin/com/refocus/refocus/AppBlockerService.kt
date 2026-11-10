@@ -3,6 +3,10 @@ package com.refocus.refocus
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent
 import android.util.Log
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 
 class AppBlockerService : AccessibilityService() {
     val TAG = "AppBlockerService"
@@ -11,20 +15,8 @@ class AppBlockerService : AccessibilityService() {
 
     companion object {
         var instance: AppBlockerService? = null
+            private set
     }
-
-    /*
-    companion object {
-        // Lista estática temporária para fins de teste.
-        // Contém os IDs de pacotes do Instagram e TikTok (Musically).
-        val blockedPackages = mutableSetOf(
-            "com.instagram.android",
-            "com.zhiliaoapp.musically", // TikTok,
-            "com.taxis99",
-            "com.google.android.apps.youtube.creator" // YT Studio
-        )
-    }
-    */
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -39,6 +31,49 @@ class AppBlockerService : AccessibilityService() {
 
     fun closeApp() {
         performGlobalAction(GLOBAL_ACTION_HOME)
+
+        showNotification(
+            "Limite de uso atingido!",
+            "O aplicativo foi bloqueado pelo ReFocus."
+        )
+    }
+
+    private fun showNotification(
+        title: String,
+        message: String
+    ) {
+        val channelId = "refocus_alerts"
+
+        val manager = getSystemService(
+            NotificationManager::class.java
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Alertas do ReFocus",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            channel.description = "Alertas sobre o uso de aplicativos"
+
+            manager.createNotificationChannel(channel)
+        }
+
+        val notification = Notification.Builder(
+            this,
+            channelId
+        )
+            .setContentTitle(title)
+            .setContentText(message)
+            .setSmallIcon(android.R.drawable.ic_menu_info_details)
+            .setAutoCancel(true)
+            .build()
+
+        manager.notify(
+            1001,
+            notification
+        )
     }
 
     fun updateBlockedList() {
@@ -69,7 +104,7 @@ class AppBlockerService : AccessibilityService() {
                     Log.w(TAG, "App bloqueado detectado! Redirecionando para a Home.")
 
                     // Executa a ação global de pressionar o botão Home do Android, saindo do app
-                    performGlobalAction(GLOBAL_ACTION_HOME)
+                    closeApp()
                 }
             }
         }

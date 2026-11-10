@@ -16,6 +16,7 @@ Future<void> startMonitoring() async {
   // Chama o inicio do monitoramento nativo via MethodChannel
   print('[STARTUP] Start monitoring');
   await usageChannel.invokeMethod('startMonitoring',);
+  await usageChannel.invokeMethod('testNotification');
 }
 
 void main() {

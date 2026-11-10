@@ -41,6 +41,12 @@ class  MainActivity: FlutterActivity() {
     }
     */
 
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        requestNotificationPermission()
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
@@ -93,6 +99,20 @@ class  MainActivity: FlutterActivity() {
 
                     result.success(true)
                 }
+                "testNotification" -> {
+                    val service = UsageMonitorService.instance
+
+                    if (service != null) {
+                        service.testNotification()
+                        result.success(true)
+                    } else {
+                        result.error(
+                            "SERVICE_NOT_RUNNING",
+                            "O serviço de monitoramento não está ativo.",
+                            null
+                        )
+                    }
+                }
                 else -> {
                     result.notImplemented()
                 }
@@ -124,5 +144,19 @@ class  MainActivity: FlutterActivity() {
                 result.notImplemented()
             }
         } }
+    }
+
+    private fun requestNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            if (checkSelfPermission(
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    1001
+                )
+            }
+        }
     }
 }

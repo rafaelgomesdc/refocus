@@ -16,31 +16,6 @@ class  MainActivity: FlutterActivity() {
     private val USAGE_CHANNEL = "com.refocus.app/usage"
     private val APP_INFO_CHANNEL = "com.refocus/app_info" //channel para acessar os packages
 
-    /*
-    private fun getCurrentApp(): String? {
-        val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-
-        val endTime = System.currentTimeMillis()
-        val startTime = endTime - 1000 * 60 //Ultimos 60 segundos
-
-        val events = usageStatsManager.queryEvents(startTime, endTime)
-
-        val event = UsageEvents.Event()
-
-        var currentPackage: String? = null
-
-        while (events.hasNextEvent()) {
-            events.getNextEvent(event)
-
-            if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
-                currentPackage = event.packageName
-            }
-        }
-
-        return currentPackage
-    }
-    */
-
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
 

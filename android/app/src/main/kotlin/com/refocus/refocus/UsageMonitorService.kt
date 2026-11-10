@@ -12,12 +12,10 @@ import android.os.IBinder
 import android.os.Looper
 
 import android.util.Log
-import com.refocus.refocus.AppBlockerService.Companion.instance
 
 private const val TAG = "ReFocusMonitor"
 
 class UsageMonitorService : Service() {
-    /*MONITORAMENTO PRE EXISTENTE*/
     private var monitoring = false
     private var monitorThread: Thread? = null
     private var currentPackage: String? = null
@@ -54,7 +52,6 @@ class UsageMonitorService : Service() {
         handler.post(monitorLog)
     }
 
-    /* TESTE DEBUG */
     override fun onStartCommand(
         intent: Intent?,
         flags: Int,
@@ -62,7 +59,6 @@ class UsageMonitorService : Service() {
     ): Int {
         Log.d(TAG, "SERVIÇO INICIADO | startId=$startId")
 
-        /*PRE EXISTENTE*/
         createNotification()
 
         getMonitoredAppsData() // Carrega os apps monitorados pela primeira vez
@@ -72,7 +68,6 @@ class UsageMonitorService : Service() {
         return START_STICKY
     }
 
-    /* TESTE DEBUG */
     private fun startMonitoringthread() {
         if (monitorThread?.isAlive == true) {
             Log.w(TAG, "Monitoramento ja esta em execucao.")
@@ -90,7 +85,6 @@ class UsageMonitorService : Service() {
     }
 
     fun updateBlockedList() {
-        // Logica para consultar os aplicativos bloqueados
         /*
         * 1 - Consultar no banco de dados
         * 2 - Retornar uma lista de packages
@@ -211,7 +205,6 @@ class UsageMonitorService : Service() {
         appsMonitorados = _appsMonitorados
     }
 
-    /*PRE EXISTENTE*/
     private fun monitorUsage() {
 
         Log.d(TAG, "Monitoramento Iniciado")
@@ -313,7 +306,6 @@ class UsageMonitorService : Service() {
 
         sessionStart = 0L
     }
-    /*FIM*/
 
     override fun onDestroy() {
         instance = null
@@ -321,13 +313,12 @@ class UsageMonitorService : Service() {
         handler.removeCallbacks(monitorLog)
         Log.w(TAG, "SERVIÇO DESTRUÍDO")
 
-        /*PRE EXISTENTE*/
         monitoring = false
 
         if (currentPackage != null && sessionStart > 0) {
             closeSession()
         }
-        /*FIM*/
+
         super.onDestroy()
     }
 
@@ -368,7 +359,6 @@ class UsageMonitorService : Service() {
         Log.d(TAG, "Serviço promovido a primeiro plano")
     }
 
-    /* TESTE DE NOTIFICAÇÃO */
     fun showNotification(
         title: String,
         message: String
@@ -434,7 +424,6 @@ class UsageMonitorService : Service() {
             message = "O ReFocus conseguiu enviar uma notificação."
         )
     }
-    /* FIM - TESTE DE NOTIFICAÇÃO */
 
     override fun onBind(intent: Intent?): IBinder? {
         return null

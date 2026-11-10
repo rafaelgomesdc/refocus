@@ -246,16 +246,6 @@ class _ManageAppsScreenState extends State<ManageAppsScreen> {
                   },
                 ),
               ),
-              /*
-              const SizedBox(height: 20),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ElevatedButton(
-                  onPressed: widget.monitoramentoController.consultarUsoHoje(),
-                  child: const Text('Atualizar uso'),
-                ),
-              )*/
             ],
           ),
         );

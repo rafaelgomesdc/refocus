@@ -2,7 +2,7 @@ import 'package:refocus/models/apps_model.dart';
 import 'package:refocus/objs/app.dart';
 import 'package:refocus/objs/app_monitorado.dart';
 import 'package:flutter/services.dart';
-//import 'package:refocus/database/temp_database.json';
+
 class AppsController {
 
   AppsModel? appsModel;

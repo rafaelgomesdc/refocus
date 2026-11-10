@@ -16,7 +16,6 @@ Future<void> startMonitoring() async {
   // Chama o inicio do monitoramento nativo via MethodChannel
   print('[STARTUP] Start monitoring');
   await usageChannel.invokeMethod('startMonitoring',);
-  await usageChannel.invokeMethod('testNotification');
 }
 
 void main() {
@@ -37,28 +36,16 @@ void main() {
 
 Future<void> initializeApp() async {
   try {
-    print('[STARTUP] Inicializando banco de dados');
-
     final db = await accessDatabase();
-
-    print('[STARTUP] Banco de dados inicializado');
 
     final appsController = AppsController(db);
     final monitoramentoController = MonitoramentoController();
 
-    print('[STARTUP] Iniciando monitoramento');
-
     await startMonitoring();
-
-    print('[STARTUP] Monitoramento iniciado');
 
     final permissions = await checkPermissions();
 
-    print('[STARTUP] Permissões verificadas: $permissions');
-
     await appsController.getInstalledApps();
-
-    print('[STARTUP] Aplicativos atualizados');
 
     runApp(ReFocusApp(
       appsController,
@@ -70,33 +57,7 @@ Future<void> initializeApp() async {
     print(stackTrace);
   }
 }
-/*
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Inicializa o flutter para depois chamar MethodChannel
-  print('[STARTUP] Iniciando aplicação');
 
-  final appsController = AppsController(await accessDatabase());
-  print('[STARTUP] Instaciou AppsController apos carregar accessDatabase');
-  final monitoramentoController = MonitoramentoController();
-
-  await startMonitoring(); // Inicia o monitoramento
-  print('[STARTUP] Iniciou o monitoramento');
-
-  final permissions = await checkPermissions(); // Chama a verificacao de permissoes necessarias
-  print('[STARTUP] Checou as permissoes');
-
-  /* DEPURACAO */
-  print("=====PERMISSÃO DE DADOS DE USO=====");
-  print(permissions);
-  print("===FIM PERMISSÃO DE DADOS DE USO===");
-  /* FIM - DEPURACAO */
-
-  await appsController.getInstalledApps(); // Atualiza os aplicativos instalados no banco de dados
-  print('[STARTUP] Atualizou os apps instalados no banco de dados');
-
-  runApp(ReFocusApp(appsController, monitoramentoController));
-}
-*/
 class ReFocusApp extends StatelessWidget {
   final AppsController appsController;
   final MonitoramentoController monitoramentoController;

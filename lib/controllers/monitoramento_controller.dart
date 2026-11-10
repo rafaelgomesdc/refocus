@@ -2,7 +2,6 @@ import 'package:flutter/services.dart';
 import 'package:refocus/objs/app_monitorado.dart';
 import 'package:refocus/services/monitoramento_service.dart';
 
-import 'package:refocus/controllers/apps_controller.dart';
 
 class MonitoramentoController {
   Future<void> consultarAppEmUso() async {

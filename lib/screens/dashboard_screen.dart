@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/*TESTE DE MONITORAMENTO*/
 import 'package:flutter/services.dart';
 import 'package:refocus/controllers/apps_controller.dart';
 import 'package:refocus/controllers/monitoramento_controller.dart';
@@ -25,8 +24,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Map<dynamic, dynamic> _dadosUso = {};
 
   List<Map<String,dynamic>> _apps = [];
-
-  static const MethodChannel usageChannel =  MethodChannel('com.refocus.app/usage');
 
   @override
   void initState() {
@@ -128,9 +125,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(height: 16),
                   for (var app in _apps)
                     _buildAppUsageRow(app['name'], app['used'], Icons.apps),
-                  /*_buildAppUsageRow('Instagram', '0h33', Icons.camera_alt),
-                  _buildAppUsageRow('TikTok', '0h29', Icons.music_note),
-                  _buildAppUsageRow('Whatsapp', '0h24', Icons.chat),*/
                 ],
               ),
             ),
